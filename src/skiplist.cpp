@@ -47,6 +47,6 @@ inline bool skiplist<Key, Value, MaxLevel>::_iterator::hasNext() {
 }
 
 template<typename Key, typename Value, int MaxLevel>
-inline typename skiplist<Key, Value, MaxLevel>::KVPairType & skiplist<Key, Value, MaxLevel>::_iterator::next() {
+inline typename skiplist<Key, Value, MaxLevel>::KVPairType skiplist<Key, Value, MaxLevel>::_iterator::next() {
 
 }

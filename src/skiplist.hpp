@@ -124,7 +124,7 @@ class skiplist {
       this->access = pos;
     }
     bool hasNext();
-    KVPairType& next();
+    KVPairType next();
   };
 
   using iterator = _iterator;
