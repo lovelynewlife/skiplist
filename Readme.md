@@ -17,6 +17,8 @@ test using gtest
 mkdir third_party && cd third_party
 git clone https://github.com/google/googletest.git  
 ```
+### Notice
+didn't take concurrency into account, not thread-safe.
 
 ### Reference
 Skip Lists: A Probabilistic Alternative to Balanced Tree
