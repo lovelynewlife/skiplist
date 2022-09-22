@@ -19,9 +19,8 @@ class random_util {
   }
 };
 
-// It's a single key-map like c++ map(STL style).
+// It's a single key-map, like c++ map(STL style).
 // but the interfaces are java-style, LOL.
-// The level of a skiplist is the max level of nodes in the list.
 template<typename Key, typename Value, int MaxLevel=12>
 class skiplist {
  public:
@@ -46,6 +45,7 @@ class skiplist {
     }
 
     Node(KeyType &key, ValueType &value, int level) {
+      assert(level > 0);
       this->key = key;
       this->value = value;
       this->forward = new Node*[level];
@@ -62,12 +62,26 @@ class skiplist {
 
   using NodeType = Node;
   using KVPairType = KVPair;
+  using NodePtr = Node*;
 
-  explicit skiplist():level(0), size(0) {
+  explicit skiplist():level(0), size(0), rand(time(nullptr)){
     // Head Node of the list has a pre-defined max level.
-    // use 12 as default from google/leveldb.
-    this->rand = random_util(time(nullptr));
-    this->head = new Node(this->maxLevel);
+    // use 12 as default from Google/leveldb.
+    assert(maxLevel > 0);
+    this->head = new Node*[maxLevel];
+    for(int i = 0; i < maxLevel; i++) {
+      this->head[i] = nullptr;
+    }
+  }
+
+  ~skiplist() {
+    NodePtr cur = this->head[0];
+    while (cur != nullptr) {
+      NodePtr del = cur;
+      cur = cur->forward[0];
+      delete del;
+    }
+    delete [] this->head;
   }
 
   void put(KeyType &key, ValueType &value);
@@ -79,28 +93,38 @@ class skiplist {
 
   void clear();
 
+ private:
+  static const int maxLevel = MaxLevel;
+  int level{};// The level of a skiplist is the max level of nodes in the list.
+  int size{};
+  random_util rand;
+  NodePtr *head;
+
+  int randomLevel() {
+    static const double p = 0.5;
+    int newLevel = 1;
+    while (this->rand.next() < p && newLevel < maxLevel) {
+      newLevel += 1;
+    }
+    return newLevel;
+  }
+
   class iterator {
    private:
-    NodeType *head;
+    NodePtr *head;
     using KVPairType = typename skiplist<KeyType, ValueType, MaxLevel>::KVPair;
 
    public:
-    iterator() {
-      this->head = skiplist<KeyType, ValueType>::head;
+    explicit iterator(NodePtr pos) {
+      this->head = pos;
     }
     bool hasNext();
     KVPairType next();
   };
 
- private:
-  const int maxLevel = MaxLevel;
-  int level{};
-  int size{};
-  random_util rand;
-  NodeType *head;
-
-  int randomLevel() {
-    //TODO: get a random level for a new list Node.
+ public:
+  iterator beginIterator() {
+    return iterator(this->head);
   }
 };
 
