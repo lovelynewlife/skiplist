@@ -7,6 +7,7 @@ add_subdirectory("third_party/googletest")
 
 add_executable(main main.cpp)
 
+# In fact, skiplist is a template class, it can not compile and export itself.
 add_library(skiplist "")
 target_sources(skiplist
         PRIVATE

@@ -51,6 +51,7 @@ class test_class{
 TEST(skiplist_test, init) {
   std::cout << "Test skip list init(construct)\n";
   skiplist<int, int> int2int_list;
+  auto it = int2int_list.begin();
   skiplist<std::string, int> string2int_list;
   skiplist<int, test_struct> int2struct_list;
   skiplist<int, int, 24> int2int_list_24;

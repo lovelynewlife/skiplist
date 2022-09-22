@@ -6,37 +6,47 @@
 
 // skiplist interface implementation.
 template <typename Key, typename Value, int  MaxLevel>
-void skiplist<Key, Value, MaxLevel>::put(skiplist::KeyType &key, skiplist::ValueType &value) {
+inline void skiplist<Key, Value, MaxLevel>::put(skiplist::KeyType &key, skiplist::ValueType &value) {
 
 }
 
 template <typename Key, typename Value, int  MaxLevel>
-void skiplist<Key, Value, MaxLevel>::put(skiplist::KeyType &&key, skiplist::ValueType &&value) {
+inline void skiplist<Key, Value, MaxLevel>::put(skiplist::KeyType &&key, skiplist::ValueType &&value) {
 
 }
 
 template <typename Key, typename Value, int  MaxLevel>
-typename skiplist<Key, Value, MaxLevel>::ValueType & skiplist<Key, Value, MaxLevel>::get(skiplist::KeyType &key) {
+inline const typename skiplist<Key, Value, MaxLevel>::ValueType & skiplist<Key, Value, MaxLevel>::get(skiplist::KeyType &key) const {
+
+}
+
+template <typename Key, typename Value, int  MaxLevel>
+inline const typename skiplist<Key, Value, MaxLevel>::ValueType & skiplist<Key, Value, MaxLevel>::get(skiplist::KeyType &&key) const {
 
 }
 
 template <typename Key, typename Value, int MaxLevel>
-void skiplist<Key, Value, MaxLevel>::remove(skiplist::KeyType &key) {
+inline void skiplist<Key, Value, MaxLevel>::remove(skiplist::KeyType &key) {
 
 }
 
 template <typename Key, typename Value, int MaxLevel>
-void skiplist<Key, Value, MaxLevel>::clear() {
+inline void skiplist<Key, Value, MaxLevel>::remove(skiplist::KeyType &&key) {
+
+}
+
+template <typename Key, typename Value, int MaxLevel>
+inline void skiplist<Key, Value, MaxLevel>::clear() {
 
 }
 
 // skip list iterator implementation.
 template<typename Key, typename Value, int MaxLevel>
-bool skiplist<Key, Value, MaxLevel>::iterator::hasNext() {
+inline bool skiplist<Key, Value, MaxLevel>::_iterator::hasNext() {
   return true;
 }
 
 template<typename Key, typename Value, int MaxLevel>
-typename skiplist<Key, Value, MaxLevel>::KVPairType skiplist<Key, Value, MaxLevel>::iterator::next() {
+inline typename skiplist<Key, Value, MaxLevel>::KVPairType & skiplist<Key, Value, MaxLevel>::_iterator::next() {
 
 }

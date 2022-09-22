@@ -19,7 +19,7 @@ class random_util {
   }
 };
 
-// It's a single key-map, like c++ map(STL style).
+// It's a single key-map, like c++ map(STL container style).
 // but the interfaces are java-style, LOL.
 template<typename Key, typename Value, int MaxLevel=12>
 class skiplist {
@@ -27,6 +27,7 @@ class skiplist {
   using KeyType = Key;
   using ValueType = Value;
 
+ private:
   struct Node {
     Key key;
     Value value;
@@ -51,7 +52,10 @@ class skiplist {
       this->forward = new Node*[level];
     }
   };
+  using NodeType = Node;
+  using NodePtr = NodeType*;
 
+ public:
   struct KVPair {
     KeyType &key;
     ValueType &value;
@@ -60,15 +64,13 @@ class skiplist {
     KVPair(KeyType &key, ValueType &value):key(key), value(value) {}
   };
 
-  using NodeType = Node;
   using KVPairType = KVPair;
-  using NodePtr = Node*;
 
   explicit skiplist():level(0), size(0), rand(time(nullptr)){
     // Head Node of the list has a pre-defined max level.
     // use 12 as default from Google/leveldb.
     assert(maxLevel > 0);
-    this->head = new Node*[maxLevel];
+    this->head = new NodePtr [maxLevel];
     for(int i = 0; i < maxLevel; i++) {
       this->head[i] = nullptr;
     }
@@ -87,9 +89,11 @@ class skiplist {
   void put(KeyType &key, ValueType &value);
   void put(KeyType &&key, ValueType &&value);
 
-  ValueType& get(KeyType &key);
+  const ValueType & get(KeyType &key) const;
+  const ValueType & get(KeyType &&key) const;
 
   void remove(KeyType &key);
+  void remove(KeyType &&key);
 
   void clear();
 
@@ -109,21 +113,23 @@ class skiplist {
     return newLevel;
   }
 
-  class iterator {
+ public:
+  class _iterator {
    private:
-    NodePtr *head;
+    NodePtr *access;
     using KVPairType = typename skiplist<KeyType, ValueType, MaxLevel>::KVPair;
 
    public:
-    explicit iterator(NodePtr pos) {
-      this->head = pos;
+    explicit _iterator(NodePtr *pos) {
+      this->access = pos;
     }
     bool hasNext();
-    KVPairType next();
+    KVPairType& next();
   };
 
- public:
-  iterator beginIterator() {
+  using iterator = _iterator;
+
+  iterator begin() {
     return iterator(this->head);
   }
 };
