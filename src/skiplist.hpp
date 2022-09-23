@@ -6,6 +6,7 @@
 #define SKIPLIST_SKIPLIST_HPP
 
 #include <random>
+#include <cassert>
 
 class random_util {
  private:
@@ -39,17 +40,18 @@ class skiplist {
       this->forward = new Node*[level];
     }
 
-    Node(KeyType &key, ValueType &value) {
+    Node(const KeyType &key, const ValueType &value) {
       this->key = key;
       this->value = value;
       this->forward = nullptr;
     }
 
-    Node(KeyType &key, ValueType &value, int level) {
+    Node(const KeyType &key, const ValueType &value, int level):key(key),value(value) {
       assert(level > 0);
-      this->key = key;
-      this->value = value;
       this->forward = new Node*[level];
+      for(int i = 0; i < level; i++) {
+        this->forward[i] = nullptr;
+      }
     }
   };
   using NodeType = Node;
@@ -66,7 +68,7 @@ class skiplist {
 
   using KVPairType = KVPair;
 
-  explicit skiplist():level(0), size(0), rand(time(nullptr)){
+  explicit skiplist():level(1), _size(0), rand(time(nullptr)){
     // Head Node of the list has a pre-defined max level.
     // use 12 as default from Google/leveldb.
     assert(maxLevel > 0);
@@ -86,21 +88,24 @@ class skiplist {
     delete [] this->head;
   }
 
-  void put(KeyType &key, ValueType &value);
-  void put(KeyType &&key, ValueType &&value);
+  void put(const KeyType &key, const ValueType &value);
 
-  const ValueType & get(KeyType &key) const;
-  const ValueType & get(KeyType &&key) const;
+  const ValueType & get(const KeyType &key);
 
-  void remove(KeyType &key);
-  void remove(KeyType &&key);
+  void remove(const KeyType &key);
 
   void clear();
+
+  bool contains(const KeyType &key) const;
+
+  int size() const {
+    return this->_size;
+  }
 
  private:
   static const int maxLevel = MaxLevel;
   int level{};// The level of a skiplist is the max level of nodes in the list.
-  int size{};
+  int _size{};
   random_util rand;
   NodePtr *head;
 
@@ -112,6 +117,9 @@ class skiplist {
     }
     return newLevel;
   }
+
+  NodePtr _upsert(const KeyType &key, const ValueType &value);
+  const ValueType & _get(const KeyType &key);
 
  public:
   class _iterator {
