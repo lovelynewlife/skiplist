@@ -119,7 +119,6 @@ inline void skiplist<Key, Value, MaxLevel>::remove(const KeyType &key) {
 template <typename Key, typename Value, int MaxLevel>
 inline void skiplist<Key, Value, MaxLevel>::clear() {
   NodePtr cur = this->_head->getForward()[0];
-  assert(cur != nullptr);
   while(cur != nullptr) {
     NodePtr del = cur;
     cur = cur->getForward()[0];
@@ -149,14 +148,20 @@ bool skiplist<Key, Value, MaxLevel>::contains(const KeyType &key) const {
   }
   return false;
 }
+template <typename Key, typename Value, int MaxLevel>
+Value & skiplist<Key, Value, MaxLevel>::operator[](const KeyType &key) {
+  return this->_get(key);
+}
 
 // skip list iterator implementation.
 template<typename Key, typename Value, int MaxLevel>
 inline bool skiplist<Key, Value, MaxLevel>::_iterator::hasNext() {
-  return true;
+  return this->pos != nullptr;
 }
 
 template<typename Key, typename Value, int MaxLevel>
 inline typename skiplist<Key, Value, MaxLevel>::KVPairType skiplist<Key, Value, MaxLevel>::_iterator::next() {
-
+  KVPair ret(*this->pos->getKey(), *this->pos->getValue());
+  this->pos = this->pos->getForward()[0];
+  return ret;
 }

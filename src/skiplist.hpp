@@ -29,6 +29,7 @@ class skiplist {
   using ValueType = Value;
 
  private:
+  // these Node classes are designed to not store k&v in head node.
   class Node {
  private:
     Node **forward;
@@ -90,10 +91,17 @@ class skiplist {
   };
 
   struct KVPair {
-    KeyType &key;
-    ValueType &value;
-
-    KVPair(KeyType &key, ValueType &value):key(key), value(value) {}
+   private:
+    KeyType &_key;
+    ValueType &_value;
+   public:
+    KVPair(KeyType &key, ValueType &value):_key(key), _value(value) {}
+    KeyType & key() {
+      return this->_key;
+    }
+    ValueType & value() {
+      return this->_value;
+    }
   };
 
   using KVPairType = KVPair;
@@ -103,6 +111,18 @@ class skiplist {
   explicit skiplist(): _level(0), _size(0), _rand(time(nullptr)){
     // Head KVNode of the list has a pre-defined max _level.
     // use 12 as default from Google/leveldb.
+    assert(maxLevel > 0);
+    this->_head = new Node(maxLevel);
+  }
+
+  // shallow copy, because level is not stored in Node type.
+
+  // move constructor.
+  skiplist(skiplist<KeyType, ValueType, MaxLevel> &&other) noexcept {
+    this->_head = other._head;
+    this->_level = other._level;
+    this->_size = other._size;
+    this->_rand = random_util(time(nullptr));
     assert(maxLevel > 0);
     this->_head = new Node(maxLevel);
   }
@@ -119,6 +139,8 @@ class skiplist {
   void put(const KeyType &key, const ValueType &value);
 
   ValueType & get(const KeyType &key);
+
+  ValueType & operator [](const KeyType &key);
 
   void remove(const KeyType &key);
 
@@ -170,7 +192,7 @@ class skiplist {
   using iterator = _iterator;
 
   iterator begin() {
-    return iterator(this->_head);
+    return iterator(this->_head->getForward()[0]);
   }
 };
 

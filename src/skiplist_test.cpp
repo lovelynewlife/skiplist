@@ -4,7 +4,6 @@
 
 #include "gtest/gtest.h"
 #include <string>
-#include <utility>
 #include "skiplist.cpp"
 #include "skiplist.hpp"
 
@@ -297,5 +296,108 @@ TEST(class2class_test, remove_contains) {
   ASSERT_EQ(l.contains("1"), false);
   CHECK(clear size)
   ASSERT_EQ(l.size(), 0);
+  PASS
+}
+
+TEST(iterator_test, basic_iterate) {
+  TITLE(test iterator basic)
+  skiplist<std::string, test_class> l;
+  l.put("2",test_class{2,2,"2"});
+  l.put("1",test_class{1,1,"1"});
+  l.put("3",test_class{3,3,"3"});
+  auto it = l.begin();
+  std::string res;
+  while (it.hasNext()) {
+    res += it.next().value().getString();
+  }
+  ASSERT_EQ(res, "123");
+  l.remove("1");
+  l.remove("3");
+  res = "";
+  it = l.begin();
+  while(it.hasNext()) {
+    res += it.next().value().getString();
+  }
+  ASSERT_EQ(res, "2");
+
+  res = "";
+  l.clear();
+  it = l.begin();
+  while (it.hasNext()) {
+    res += it.next().value().getString();
+  }
+  ASSERT_EQ(res, "");
+  res = "";
+  l.put("2",test_class{2,2,"2"});
+  l.put("1",test_class{1,1,"1"});
+  l.put("3",test_class{3,3,"3"});
+  l.get("4");
+  it = l.begin();
+  while(it.hasNext()) {
+    res += it.next().value().getString();
+  }
+  ASSERT_EQ(res, "123");
+  CHECK(size)
+  ASSERT_EQ(l.size(), 4);
+  PASS
+}
+
+TEST(iterator_test, iterator_valid_guarantee) {
+  TITLE(test iterator valid gurantee)
+  skiplist<std::string, test_class> l;
+  l.put("2",test_class{2,2,"2"});
+  l.put("1",test_class{1,1,"1"});
+  l.put("3",test_class{3,3,"3"});
+  auto it = l.begin();
+  // iterate to set value.
+  std::string res;
+  while (it.hasNext()) {
+    it.next().value().setString("0");
+  }
+  it = l.begin();
+  while (it.hasNext()) {
+    res += it.next().value().getString();
+  }
+  ASSERT_EQ(res, "000");
+
+  it = l.begin();
+  res = "";
+  while (it.hasNext()) {
+    // use ref type to hold the obj.
+    test_class & t = it.next().value();
+    t.setString("1");
+  }
+  it = l.begin();
+  while (it.hasNext()) {
+    res += it.next().value().getString();
+  }
+  ASSERT_EQ(res, "111");
+
+  // iterate to remove every key.
+  it = l.begin();
+  while (it.hasNext()) {
+    auto key = it.next().key();
+    l.remove(key);
+  }
+  res = "";
+  it = l.begin();
+  while (it.hasNext()) {
+    res += it.next().value().getString();
+  }
+  ASSERT_EQ(res, "");
+
+  l.clear();
+  l.put("0",test_class{0,0,"0"});
+  l.put("2",test_class{2,2,"2"});
+  res = "";
+  it = l.begin();
+  while (it.hasNext()) {
+    res += it.next().value().getString();
+    l.put("1",test_class{1,1,"1"});
+    l.put("2",test_class{8,8,"8"});
+    l["3"] = test_class{3,3,"3"};
+    l.put("4",test_class{4,4,"4"});
+  }
+  ASSERT_EQ(res, "0834");
   PASS
 }
