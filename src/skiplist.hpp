@@ -29,68 +29,96 @@ class skiplist {
   using ValueType = Value;
 
  private:
-  struct Node {
-    Key key;
-    Value value;
-    Node** forward;
-    using KeyType = Key;
-    using ValueType = Value;
-
-    explicit Node(int level) {
-      this->forward = new Node*[level];
-    }
-
-    Node(const KeyType &key, const ValueType &value) {
-      this->key = key;
-      this->value = value;
+  class Node {
+ private:
+    Node **forward;
+   public:
+    Node() {
       this->forward = nullptr;
     }
-
-    Node(const KeyType &key, const ValueType &value, int level):key(key),value(value) {
+    ~Node() {
+      delete [] forward;
+    }
+    explicit Node(int level) {
       assert(level > 0);
-      this->forward = new Node*[level];
+      this->forward = new Node *[level];
       for(int i = 0; i < level; i++) {
         this->forward[i] = nullptr;
       }
     }
-  };
-  using NodeType = Node;
-  using NodePtr = NodeType*;
+    virtual KeyType* getKey() {
+      return nullptr;
+    }
 
- public:
+    virtual ValueType* getValue() {
+      return nullptr;
+    }
+
+    virtual void setValue(ValueType value) {}
+
+    virtual Node** getForward(){
+      return this->forward;
+    }
+
+  };
+
+  using NodeType = Node;
+  using NodePtr = NodeType *;
+
+  class KVNode: public Node{
+   private:
+    Key key;
+    Value value;
+    using KeyType = Key;
+    using ValueType = Value;
+
+   public:
+
+    KVNode(const KeyType &key, const ValueType &value, int level):key(key), value(value), Node(level) {}
+
+    KeyType* getKey() {
+      return &this->key;
+    }
+
+    ValueType* getValue() {
+      return &this->value;
+    }
+
+    void setValue(ValueType v){
+      this->value = v;
+    }
+  };
+
   struct KVPair {
     KeyType &key;
     ValueType &value;
 
-    KVPair(KeyType &&key, ValueType &&value):key(key), value(value) {}
     KVPair(KeyType &key, ValueType &value):key(key), value(value) {}
   };
 
   using KVPairType = KVPair;
 
-  explicit skiplist():level(1), _size(0), rand(time(nullptr)){
-    // Head Node of the list has a pre-defined max level.
+ public:
+
+  explicit skiplist(): _level(0), _size(0), _rand(time(nullptr)){
+    // Head KVNode of the list has a pre-defined max _level.
     // use 12 as default from Google/leveldb.
     assert(maxLevel > 0);
-    this->head = new NodePtr [maxLevel];
-    for(int i = 0; i < maxLevel; i++) {
-      this->head[i] = nullptr;
-    }
+    this->_head = new Node(maxLevel);
   }
 
   ~skiplist() {
-    NodePtr cur = this->head[0];
+    NodePtr cur = this->_head;
     while (cur != nullptr) {
       NodePtr del = cur;
-      cur = cur->forward[0];
+      cur = cur->getForward()[0];
       delete del;
     }
-    delete [] this->head;
   }
 
   void put(const KeyType &key, const ValueType &value);
 
-  const ValueType & get(const KeyType &key);
+  ValueType & get(const KeyType &key);
 
   void remove(const KeyType &key);
 
@@ -102,34 +130,38 @@ class skiplist {
     return this->_size;
   }
 
+  int level() const {
+    return this->_level;
+  }
+
  private:
   static const int maxLevel = MaxLevel;
-  int level{};// The level of a skiplist is the max level of nodes in the list.
+  int _level{};// The _level of a skiplist is the max _level of nodes in the list.
   int _size{};
-  random_util rand;
-  NodePtr *head;
+  random_util _rand;
+  NodePtr _head;
 
   int randomLevel() {
     static const double p = 0.5;
     int newLevel = 1;
-    while (this->rand.next() < p && newLevel < maxLevel) {
+    while (this->_rand.next() < p && newLevel < maxLevel) {
       newLevel += 1;
     }
     return newLevel;
   }
 
   NodePtr _upsert(const KeyType &key, const ValueType &value);
-  const ValueType & _get(const KeyType &key);
+  ValueType & _get(const KeyType &key);
 
  public:
   class _iterator {
    private:
-    NodePtr *access;
+    NodePtr pos;
     using KVPairType = typename skiplist<KeyType, ValueType, MaxLevel>::KVPair;
 
    public:
-    explicit _iterator(NodePtr *pos) {
-      this->access = pos;
+    explicit _iterator(NodePtr pos) {
+      this->pos = pos;
     }
     bool hasNext();
     KVPairType next();
@@ -138,7 +170,7 @@ class skiplist {
   using iterator = _iterator;
 
   iterator begin() {
-    return iterator(this->head);
+    return iterator(this->_head);
   }
 };
 

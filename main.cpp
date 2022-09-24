@@ -22,7 +22,7 @@ class util {
   }
 };
 
-const util & add_util(util &u) {
+util & add_util(util &u) {
   u.increment();
   return u;
 }
@@ -36,6 +36,7 @@ int main() {
     v[0].increment();
     std::cout << v[0].getValue() << std::endl;
 
+    add_util(u);
     u = add_util(u);
     std::cout << u.getValue() << std::endl;
 
@@ -53,9 +54,6 @@ int main() {
     std::vector<int> v2;
     v2.push_back(0);
     std::sort(v2.begin(), v2.end());
-
-    skiplist<int, int>::KVPair pair(10, 15);
-    std::cout << pair.key << ","<< pair.value << std::endl;
 
     random_util rand(time(nullptr));
     for(auto i = 0; i <= 10; i++){
