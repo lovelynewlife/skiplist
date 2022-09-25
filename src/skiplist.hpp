@@ -31,13 +31,13 @@ class skiplist {
  private:
   // these Node classes are designed to not store k&v in head node.
   class Node {
- private:
+   private:
     Node **forward;
    public:
     Node() {
       this->forward = nullptr;
     }
-    ~Node() {
+    virtual ~Node() {
       delete [] forward;
     }
     explicit Node(int level) {
