@@ -55,7 +55,7 @@ class skiplist {
       return nullptr;
     }
 
-    virtual void setValue(ValueType value) {}
+    virtual void setValue(const ValueType & value) {}
 
     virtual Node** getForward(){
       return this->forward;
@@ -85,7 +85,7 @@ class skiplist {
       return &this->value;
     }
 
-    void setValue(ValueType v){
+    void setValue(const ValueType & v){
       this->value = v;
     }
   };
