@@ -139,6 +139,7 @@ class skiplist {
   void put(const KeyType &key, const ValueType &value);
 
   ValueType & get(const KeyType &key);
+  Value & operator[](KeyType &&key);
 
   ValueType & operator [](const KeyType &key);
 

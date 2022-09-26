@@ -390,6 +390,7 @@ TEST(iterator_test, iterator_valid_guarantee) {
   l.put("0",test_class{0,0,"0"});
   l.put("2",test_class{2,2,"2"});
   res = "";
+  std::string k5 = "5";
   it = l.begin();
   while (it.hasNext()) {
     res += it.next().value().getString();
@@ -397,7 +398,8 @@ TEST(iterator_test, iterator_valid_guarantee) {
     l.put("2",test_class{8,8,"8"});
     l["3"] = test_class{3,3,"3"};
     l.put("4",test_class{4,4,"4"});
+    l[k5] = test_class{5,5,"5"};
   }
-  ASSERT_EQ(res, "0834");
+  ASSERT_EQ(res, "08345");
   PASS
 }

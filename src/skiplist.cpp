@@ -153,6 +153,11 @@ Value & skiplist<Key, Value, MaxLevel>::operator[](const KeyType &key) {
   return this->_get(key);
 }
 
+template <typename Key, typename Value, int MaxLevel>
+Value & skiplist<Key, Value, MaxLevel>::operator[](KeyType &&key) {
+  return this->_get(key);
+}
+
 // skip list iterator implementation.
 template<typename Key, typename Value, int MaxLevel>
 inline bool skiplist<Key, Value, MaxLevel>::_iterator::hasNext() {
