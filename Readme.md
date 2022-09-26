@@ -22,7 +22,7 @@ git clone https://github.com/google/googletest.git
 * didn't use memory pool, use new operator for simplicity.
 * didn't think too much about iterator unvalid during iteration, maybe refer to java's impl later.
 
-### Featurs
+### Features
 * "get(k)" acts just like STL map[k], so you can do l.get(k) = xxx.
 * iterator is java style.
 
