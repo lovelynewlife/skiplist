@@ -115,7 +115,8 @@ class skiplist {
     this->_head = new Node(maxLevel);
   }
 
-  // shallow copy, because level is not stored in Node type.
+  // no copy constructor, because level is not stored in Node type.
+  skiplist(skiplist<KeyType, ValueType, MaxLevel> &other) = delete;
 
   // move constructor.
   skiplist(skiplist<KeyType, ValueType, MaxLevel> &&other) noexcept {
@@ -124,8 +125,11 @@ class skiplist {
     this->_size = other._size;
     this->_rand = random_util(time(nullptr));
     assert(maxLevel > 0);
-    this->_head = new Node(maxLevel);
+    other._head = new Node(maxLevel);
+    other._level = 0;
+    other._size = 0;
   }
+
 
   ~skiplist() {
     NodePtr cur = this->_head;

@@ -311,14 +311,13 @@ TEST(iterator_test, basic_iterate) {
     res += it.next().value().getString();
   }
   ASSERT_EQ(res, "123");
-  l.remove("1");
-  l.remove("3");
+  l.remove("2");
   res = "";
   it = l.begin();
   while(it.hasNext()) {
     res += it.next().value().getString();
   }
-  ASSERT_EQ(res, "2");
+  ASSERT_EQ(res, "13");
 
   res = "";
   l.clear();
