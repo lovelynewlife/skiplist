@@ -5,7 +5,7 @@
 #include "skiplist.hpp"
 
 template <typename Key, typename Value, int MaxLevel>
-inline typename skiplist<Key, Value, MaxLevel>::NodePtr
+typename skiplist<Key, Value, MaxLevel>::NodePtr
 skiplist<Key, Value, MaxLevel>::_upsert(const KeyType &key, const ValueType &value) {
   NodePtr cur = this->_head;
   assert(cur != nullptr);
@@ -40,7 +40,7 @@ skiplist<Key, Value, MaxLevel>::_upsert(const KeyType &key, const ValueType &val
 }
 
 template <typename Key, typename Value, int MaxLevel>
-inline Value &skiplist<Key, Value, MaxLevel>::_get(const KeyType &key) {
+Value &skiplist<Key, Value, MaxLevel>::_get(const KeyType &key) {
     NodePtr cur = this->_head;
     assert(cur != nullptr);
     NodePtr update[maxLevel];
@@ -87,7 +87,7 @@ inline typename skiplist<Key, Value, MaxLevel>::ValueType & skiplist<Key, Value,
 }
 
 template <typename Key, typename Value, int MaxLevel>
-inline void skiplist<Key, Value, MaxLevel>::remove(const KeyType &key) {
+void skiplist<Key, Value, MaxLevel>::remove(const KeyType &key) {
   NodePtr cur = this->_head;
   assert(cur != nullptr);
   NodePtr update[maxLevel];
@@ -117,7 +117,7 @@ inline void skiplist<Key, Value, MaxLevel>::remove(const KeyType &key) {
 }
 
 template <typename Key, typename Value, int MaxLevel>
-inline void skiplist<Key, Value, MaxLevel>::clear() {
+void skiplist<Key, Value, MaxLevel>::clear() {
   NodePtr cur = this->_head->getForward()[0];
   while(cur != nullptr) {
     NodePtr del = cur;
@@ -165,7 +165,7 @@ inline bool skiplist<Key, Value, MaxLevel>::_iterator::hasNext() {
 }
 
 template<typename Key, typename Value, int MaxLevel>
-inline typename skiplist<Key, Value, MaxLevel>::KVPairType skiplist<Key, Value, MaxLevel>::_iterator::next() {
+typename skiplist<Key, Value, MaxLevel>::KVPairType skiplist<Key, Value, MaxLevel>::_iterator::next() {
   KVPair ret(*this->pos->getKey(), *this->pos->getValue());
   this->pos = this->pos->getForward()[0];
   return ret;
