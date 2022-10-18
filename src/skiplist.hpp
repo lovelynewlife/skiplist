@@ -99,7 +99,7 @@ class skiplist {
     KeyType & key() {
       return this->_key;
     }
-    ValueType & value() {
+    const ValueType & value() {
       return this->_value;
     }
   };
