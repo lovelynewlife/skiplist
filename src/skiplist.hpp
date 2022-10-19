@@ -96,10 +96,10 @@ class skiplist {
     ValueType &_value;
    public:
     KVPair(KeyType &key, ValueType &value):_key(key), _value(value) {}
-    KeyType & key() {
+    const KeyType & key() {
       return this->_key;
     }
-    const ValueType & value() {
+    ValueType & value() {
       return this->_value;
     }
   };
